@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Notes Editor</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <!-- add note button -->    
+        <div class="container-fluid d-flex justify-content-center my-5">
+            <button type="button" class="btn btn-warning px-4 py-3 fw-bold" data-bs-toggle="modal" data-bs-target="#addNoteModal"><i class="bi bi-file-earmark-plus me-2"></i>Add New Note</button>
+        </div>
+
+        <!-- Add Note Modal -->
+        <div class="modal fade" id="addNoteModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addNoteModalLabel">Create a new note</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="mb-3">
+                                <label for="addNoteModalTitle" class="form-label">Note Title</label>
+                                <input type="text" class="form-control" id="addNoteModalTitle">
+                            </div>
+                            <div class="mb-3">
+                                <label for="addNoteModalContent" class="form-label">Note Content</label>
+                                <textarea class="form-control" id="addNoteModalContent" rows="5"></textarea>
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="addNoteModalCheckbox">
+                                <label class="form-check-label" for="exampleCheck1">Is Important?</label>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="addNoteModalClose">Close</button>
+                        <button type="button" class="btn btn-primary" id="addNoteModalSubmit" onclick="addNoteSubmit()">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- notes -->
+        <div id="notes" class="row justify-content-center row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mx-5">
+            <h1 style="white-space: nowrap;">No notes available to show</h1>
+        </div>
+
+        <!-- Edit Note Modal -->
+        <div class="modal fade" id="editNoteModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editNoteModalLabel">Edit Note</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="mb-3">
+                                <label for="editNoteModalTitle" class="form-label">Note Title</label>
+                                <input type="text" class="form-control editNoteModal" id="editNoteModalTitle">
+                            </div>
+                            <div class="mb-3">
+                                <label for="editNoteModalContent" class="form-label">Note Content</label>
+                                <textarea class="form-control editNoteModal" id="editNoteModalContent" rows="5"></textarea>
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input editNoteModal" id="editNoteModalCheckbox">
+                                <label class="form-check-label form-control" for="editNoteModalCheckbox">Is Important?</label>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="editNoteModalClose">Close</button>
+                        <button type="button" class="btn btn-primary disabled" id="editNoteModalSubmit">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Note Modal -->
+        <div class="modal fade" id="deleteNoteModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteNoteModalLabel">Delete Note</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="mb-3">
+                                <label for="deleteNoteModalTitle" class="form-label">You are deleting a note. Write "<span id="note-title"></span>" to confirm.</label>
+                                <input type="text" class="form-control" id="deleteNoteModalTitle">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="deleteNoteModalClose">Close</button>
+                        <button type="button" class="btn btn-primary" id="deleteNoteModalSubmit">Delete Note</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            let addNoteSubmit = () => {
+                let newTitle = document.getElementById("addNoteModalTitle").value;
+                let newContent = document.getElementById("addNoteModalContent").value.replace(/\n/g, '<br/>');
+                let date = new Date();
+                let newDateTime = date.toLocaleString();
+                let checkbox = document.getElementById("addNoteModalCheckbox");
+                let newIsImp = (checkbox.checked) ? true : false;
+                
+                let idb = indexedDB.open("notes-editor",1);
+
+                idb.onsuccess = () => {
+                    let res = idb.result;
+                    let tx = res.transaction('notes','readwrite');
+                    let store = tx.objectStore('notes');
+                    store.put({
+                        Title: newTitle,
+                        Content: newContent,
+                        DateTime: newDateTime,
+                        IsImp: newIsImp
+                    });
+                }
+
+                document.getElementById("addNoteModalTitle").value="";
+                document.getElementById("addNoteModalContent").value="";
+                checkbox.checked=false;
+                document.getElementById("addNoteModalClose").click();
+                refreshNotes();
+            }
+
+            let refreshNotes = () => {
+                let idb = indexedDB.open("notes-editor",1);
+                let noteCard = '';
+
+                idb.onupgradeneeded = () => {
+                    let res = idb.result;
+                    res.createObjectStore('notes',{autoIncrement: true});
+                }
+
+                idb.onsuccess = () => {
+                    let res = idb.result;
+                    let tx = res.transaction('notes','readonly');
+                    let store = tx.objectStore('notes');
+                    let cursor = store.openCursor();
+
+                    cursor.onsuccess = () => {
+                        let note = cursor.result;
+
+                        if(note) {
+                            if(note.value.IsImp==false) {
+                                noteCard = noteCard + `
+                                <div class="col">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h5 class="card-title d-flex justify-content-between">
+                                                <div>${note.value.Title}</div>
+                                                <div>
+                                                    <button type="button" onclick="editNote(${note.key})" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editNoteModal"><i class="bi bi-pencil-square"></i></button>
+                                                    <button type="button" onclick="deleteNote(${note.key})" class="btn btn-outline-danger btn-sm"  data-bs-toggle="modal" data-bs-target="#deleteNoteModal"><i class="bi bi-trash"></i></button>
+                                                </div>
+                                            </h5>
+                                            <p class="card-text">${note.value.Content}</p>
+                                        </div>
+                                        <div class="card-footer">
+                                            <small class="text-body-secondary">${note.value.DateTime}</small>
+                                        </div>
+                                    </div>
+                                </div>`;
+                            } else {
+                                noteCard = noteCard + `
+                                <div class="col">
+                                    <div class="card border-danger border-2 h-100">
+                                        <div class="card-body">
+                                            <h5 class="card-title d-flex justify-content-between">
+                                                <div class="text-danger">${note.value.Title}</div>
+                                                <div>
+                                                    <button type="button" onclick="editNote(${note.key})" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editNoteModal"><i class="bi bi-pencil-square"></i></button>
+                                                    <button type="button" onclick="deleteNote(${note.key})" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteNoteModal"><i class="bi bi-trash"></i></button>
+                                                </div>
+                                            </h5>
+                                            <p class="card-text">${note.value.Content}</p>
+                                        </div>
+                                        <div class="card-footer">
+                                            <small class="text-body-secondary">${note.value.DateTime}</small>
+                                        </div>
+                                    </div>
+                                </div>`;
+                            }
+                            document.getElementById("notes").innerHTML = noteCard;
+                            note.continue();
+                        } 
+                    }
+                }
+            }
+
+            let editNote = (key) => {
+                let idb = indexedDB.open("notes-editor",1);
+
+                idb.onsuccess = () => {
+                    let res = idb.result;
+                    let tx = res.transaction('notes','readonly');
+                    let store = tx.objectStore('notes');
+                    let note = store.get(key);
+
+                    note.onsuccess = () => {
+                        document.getElementById("editNoteModalSubmit").classList.add("disabled");
+                        document.getElementById("editNoteModalTitle").value = note.result.Title;
+                        document.getElementById("editNoteModalContent").value = note.result.Content.replace(/<br\/>/g, '\n');
+                        if(note.result.IsImp==true) document.getElementById("editNoteModalCheckbox").checked=true
+                        else document.getElementById("editNoteModalCheckbox").checked=false;
+                    }
+                }
+
+                let editNoteModals = document.getElementsByClassName("editNoteModal");
+
+                Array.from(editNoteModals).forEach((element) => {
+                    element.addEventListener('change', () => {
+                        document.getElementById("editNoteModalSubmit").classList.remove("disabled");
+                    });
+                });
+
+                document.getElementById("editNoteModalSubmit").onclick = () => {
+                    let newTitle = document.getElementById("editNoteModalTitle").value;
+                    let newContent = document.getElementById("editNoteModalContent").value.replace(/\n/g, '<br/>');
+                    let date = new Date();
+                    let newDateTime = date.toLocaleString();
+                    let checkbox = document.getElementById("editNoteModalCheckbox");
+                    let newIsImp = (checkbox.checked) ? true : false;
+
+                    let idb = indexedDB.open("notes-editor",1);
+
+                    idb.onsuccess = () => {
+                        let res = idb.result;
+                        let tx = res.transaction('notes','readwrite');
+                        let store = tx.objectStore('notes');
+                        store.put({
+                            Title: newTitle,
+                            Content: newContent,
+                            DateTime: newDateTime,
+                            IsImp: newIsImp
+                        },key);
+                    }
+
+                    document.getElementById("editNoteModalTitle").value="";
+                    document.getElementById("editNoteModalContent").value="";
+                    checkbox.checked=false;
+                    document.getElementById("editNoteModalClose").click();
+                    refreshNotes();
+                }
+            }
+
+            let deleteNote = (key) => {
+                let idb = indexedDB.open("notes-editor",1);
+
+                idb.onsuccess = () => {
+                    let res = idb.result;
+                    let tx = res.transaction('notes','readonly');
+                    let store = tx.objectStore('notes');
+                    let note = store.get(key);
+
+                    note.onsuccess = () => {
+                        document.getElementById("deleteNoteModalSubmit").classList.add("disabled");
+                        document.getElementById("note-title").innerHTML = note.result.Title;
+                        document.getElementById("deleteNoteModalTitle").addEventListener('input', () => {
+                            if(document.getElementById("deleteNoteModalTitle").value==note.result.Title) {
+                                document.getElementById("deleteNoteModalSubmit").classList.remove("disabled");
+                                document.getElementById("deleteNoteModalTitle").style.border="5px solid green";
+                            }
+                        });
+                    }
+                }
+
+                document.getElementById("deleteNoteModalSubmit").onclick = () => {
+                    let idb = indexedDB.open("notes-editor",1);
+
+                    idb.onsuccess = () => {
+                        let res = idb.result;
+                        let tx = res.transaction('notes','readwrite');
+                        let store = tx.objectStore('notes');
+                        store.delete(key);
+                        document.getElementById("deleteNoteModalTitle").value="";
+                        document.getElementById("deleteNoteModalTitle").style.border="none";
+                        document.getElementById("deleteNoteModalClose").click();
+                        refreshNotes();
+                    }
+                }
+                
+            }
+
+            refreshNotes();
+        </script>
+    </body>
+</html>

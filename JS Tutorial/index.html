@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./external.js"></script>
+    <script>
+        //functional programming
+        const counter = () => {
+            let num = document.getElementById("counter-display").innerHTML;
+            document.getElementById("counter-display").innerHTML = Number(num)+1;
+        } 
+
+        let Addition = () => {
+            let num1 = parseInt(document.getElementById("num1").value);
+            let num2 = parseInt(document.getElementById("num2").value);
+            document.write(num1+num2);
+        }
+
+        
+    </script>
+</head>
+<body>
+    <h3 id="title" class="title" name="title" onclick=""><u>Counter Application - Click Button to run counter</u></h3>
+    <button onclick="counter()">Click!</button>
+    <h1 id="counter-display">0</h1>
+    <input type="text" id="input" placeholder="Enter your name" required />
+    <button onclick="appendFunc()">Submit</button>
+    <ul id="myList">
+        <li>Coffee</li>
+        <li>Tea</li>
+    </ul>
+    <input type="number" id="num1" placeholder="Enter num1" required />
+    <input type="number" id="num2" placeholder="Enter num2" required />
+    <button onclick="Addition()">Add</button>
+    <div id="box" style="height: 100px; width: 100px; background-color: red;" 
+    onmouseover="document.getElementById('box').style.cursor='pointer'"></div>
+    <form>
+        <input type="text" placeholder="Enter your name" />
+        <input type="email" placeholder="Enter email" required />
+        <button type="submit" onclick="ValidateEmail()">Submit</button>
+    </form>
+    <script>
+        // data storage
+            var number = 2343; // variable local scope 
+            let string = "Hello"; // variable block scope 
+            const bool = true;    // constant block scope
+
+            // variable scopes -- global, local, parameter & block
+                var x=100; // global scope
+
+                function myfunc() {
+                    var x=20; // local scope
+                    console.log(x);
+                }
+                myfunc();
+
+                if(x>20) {
+                    var x=1000; // global scope
+                    let y=2300;  // block scope
+                    const z=4543; // block scope
+                    x=54;
+                    console.log("x is greater than 20")
+                }
+                console.log(x);
+            
+            // data types
+                let str = "some text"; let str2 = 'ewrwer'; let str3 = `45344`;
+                let integer = 34234;
+                let float = 423324.334;
+                let boolean1 = false;
+                let boolean2 = true;
+                let intasstr = "4543554";
+
+                let array1 = ["text",45345,true,[1,2,3], {student1: {}, student2: {}}, function arr(){}];
+                console.log(array1[5]);
+                let array2 = new Array("text",45345,true);
+
+                let stud_obj = {
+                    student1: {
+                        usno: "4233dfsd444e",
+                        name: {
+                            fname:"akash",
+                            mname: "",
+                            lname: "soni"
+                        },
+                        guardian_info: [
+                            {
+                                name:"John doe",
+                                relationship:"father",
+                                mob_no: 32423434
+                            }
+                        ],
+                        fullname() {
+                            return this.name.fname+" "+this.name.lname;
+                        }
+                    }
+                }
+                console.log(stud_obj.student1.fullname())
+
+        // input and output
+            // document interface
+                document.getElementById("title").innerHTML = "<b>fsdfsdf</b>";
+                let xy = document.getElementsByClassName("title").innerText;
+                document.getElementsByName("input").value;
+
+                document.write("Print");
+                
+            // selector interface
+                let xz = document.querySelector("h3").innerText;
+
+            // appendChild interface
+                let appendFunc = () => {
+                    const node = document.createElement("li");
+
+                    const textNode = document.createTextNode("water");
+
+                    node.appendChild(textNode);
+
+                    document.getElementById('myList').appendChild(node);
+                }
+
+            // notifications
+                window.alert("This is an alert message");
+                let res = window.prompt("Are you sure? Write 'yes' to confirm.");
+                if(res && res.toUpperCase()=='YES') {
+                    document.write("File deleted");
+                }
+                else {
+                    document.write("Action cancelled");
+                }
+                let resp = window.confirm("Are you sure?")
+                if(resp==true) {
+                    document.write("File deleted");
+                }
+
+            // console
+                console.log("Text message");
+                console.error("Error message");
+
+        // operations
+            // arithmetic operations
+                x=y+10;  // sum
+                x=y-10;   // difference
+                x=y*10;  // product
+                x=y**10; // exponent or power (y^10)
+                x=y/10;  // division(quotient)
+                x=y%10;  // modulus(reminder of division operation)
+                x=y++; x=++y; // post incr, pre incr
+                x=y--; x=--y; // post decr. pre decr
+
+                x=5; y=10;
+                x=y++;  // x=10  y=11
+                x=++y;  // x=11  y=11
+
+            // logical operations
+                let cond1 = (x<10 && y>10);  // AND operator
+                let cond2 = (x<10 || y>10);  // OR operator
+                
+                let m=10; let n=11;
+                console.log(!(m!=n));   // NOT operator ()
+
+            // comparison operations
+                x==5;  // equal value
+                x===5; // equal value and type
+                x!=8;  // not equal value
+                x!==5; // not equal value and type
+                x>10;  // greater than
+                x<10;  // lesser than
+                x>=10; // greater than and equal
+                x<=10; // lesser than and equal
+
+            // assignment operations
+                x=10; x="string";
+                x+=10; // x=x+10
+                y-=20; // y=y-20
+                x*=y;  // x=x*y
+                x/=y;
+                x%=y;
+
+            // conditional operation/ ternary operator (?:)
+                (condition) ? true : false ;
+                (x>y) ? x : y ;
+
+                m=10; n=11;
+
+            // nullish coalescing operator (??)
+                let first=null;
+                let result = first ?? "error";
+
+
+            // typeof operations
+                typeof x;
+
+        // branching
+            // if stmt
+            let age=18;
+            if(age>=18) {
+                console.log("Eligible to drive");
+            }
+
+            // if...else stmt
+            
+            if(age>=18) {
+                console.log("Eligible to drive");
+            }
+            else {
+                console.log("Not eligible to drive");
+            }
+
+            // if..else if... else stmt
+            if(age<18) {
+                console.log("Not eligible to drive");
+            }
+            else if(age>=18 && dl==false) {
+                console.log("Not eligible to drive");
+            }
+            else if(age>=18 && dl==true) {
+                console.log("eligible to drive");
+            }
+            else {
+                console.log("input error");
+            }
+
+            // nested if stmt
+            if(age>=18) {
+                if(dl==true) {
+                    console.log("Eligible to drive");
+                }
+                else {
+                    console.log("Not eligible to drive");
+                }
+            }
+            else{
+                console.log("Not eligible to drive");
+            } 
+
+            // switch case
+            let grade='C';
+            switch(grade) {
+                case 'A+':
+                    console.log('Marks in the range of 90-100');
+                    break;
+                case 'A':
+                    console.log('Marks in the range of 80-90');
+                    break;
+                case 'B+':
+                    console.log('Marks in the range of 70-80');
+                    break;
+                case 'B':
+                    console.log('Marks in the range of 60-70');
+                    break;
+                case 'C':
+                    console.log('Marks in the range of 50-60');
+                    break;
+                case 'D':
+                    console.log('Marks in the range of 40-50');
+                    break;
+                case 'F':
+                    console.log('Marks in the range of 0-40');
+                    break;
+                default:
+                    console.log("Grade does not exist");    
+            }
+
+
+        // looping/iteration
+            // while loop
+                let num=-10;  // initialization/declaration
+                while(num>0) {    // condition
+                    if(num%2==0) {
+                        console.log(num);
+                    }
+                    num--;    // incr/decr
+                }
+
+            // for loop
+
+                for (initialization; condition; incr) {
+
+                }
+                let rows = 5;
+
+                for(let i=1; i<=rows; i++) {
+                    for(let j=1; j<=i; j++) {
+                        console.log("*")
+                    }
+                    console.log("\n")
+                }
+
+                for( let num=10; num>0; num--) {
+                    if(num%2==0) {
+                        console.log(num);
+                    }
+                }
+                
+            // do...while loop
+                let num2=-10;
+                do {
+                    if(num2%2==0) {
+                        console.log(num2);
+                    }
+                    num2--;
+                }
+                while(num2>0)
+
+            // loop control -- break, continue
+            for( let num=10; num>0; num--) {
+                console.log(num);
+                if(num==6) break;
+            }
+
+            for( let num=10; num>0; num--) {
+                if(num==6) continue;
+                console.log(num);
+            }
+                
+
+        // functions
+
+            let Subtraction = (a,b) => {
+                let diff = a-b;
+                return diff;
+            }
+
+            let sum1 = Addition(10,20); // function call
+            let sum2 = Addition(50,70);
+            let diff = Subtraction(100,20); 
+        
+        // error handling
+            let xyz=34 // syntax errors
+            window.alert('');
+            
+            // runtime errors
+            
+            let var1 = 100/"sdf"; // logical errors
+            
+        // form validation
+            // basic validation
+
+            // data format validation
+            function ValidateEmail(input) {
+                var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+                if (input.value.match(validRegex)) {
+                    alert("Valid email address!");
+                    return true;
+                } 
+                else {
+                    alert("Invalid email address!");
+                    return false;
+                }
+            }
+
+            
+            // data validation
+    </script>
+</body>
+
+</html>
